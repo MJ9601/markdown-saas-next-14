@@ -35,7 +35,6 @@ export default function Profile() {
             <p className="text-xs mt-1 text-slate-400">
               {logged ? logged.email : "jane@gmail.ocm"}
             </p>
-            <hr className="mt-2" />
             <div className="flex flex-col gap-1 mt-2">
               <Link href="/dashboard">
                 <Button
@@ -46,6 +45,7 @@ export default function Profile() {
                   <MdDashboard size={20} />
                 </Button>
               </Link>
+              <hr className="mt-1" />
               <form action="">
                 <Button
                   variant="ghost"
