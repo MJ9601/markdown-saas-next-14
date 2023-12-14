@@ -8,6 +8,7 @@ export default async function connectTodb() {
     await mongoose.connect(
       `mongodb://${dbUser}:${dbPass}@${dbHost}:27017/${dbName}?authSource=admin`,
       {
+        // @ts-ignore
         useNewUrlParser: true,
         useUnifiedTopology: true,
       }
