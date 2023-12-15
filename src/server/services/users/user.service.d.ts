@@ -14,7 +14,14 @@ export interface ICreateNewUser {
   name: string;
   email: string;
   password?: string;
-  authProvider: AuthProvider[];
-  providerId?: string;
+  googleAuthId?: string;
+  githubAuthId?: string;
   access: Role;
+  authProvider: AuthProvider;
+}
+
+export interface IUserLogin {
+  email: string;
+  password: string;
+  authProvider: AuthProvider;
 }

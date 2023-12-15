@@ -1,40 +1,42 @@
-"use server";
 import { omit } from "lodash";
+import * as argon from "argon2";
 import connectTodb from "../../connectTodb";
-import { User } from "../../schemas/user.schema";
-import { ICreateNewUser } from "./user";
+import { AuthProvider, ICreateNewUser } from ".";
+import { User } from "@/server/models/user.model";
 
 export const createNewUser = async (input: ICreateNewUser) => {
   try {
     await connectTodb();
     const user = await User.findOne({ email: input.email });
-    if (user) return "Email is Existed!!";
+    if (user) return { error: "Email is Existed!!" };
 
-    const newUser = await User.create(input);
+    const { password, authProvider, ...rest } = input;
+
+    if (input.authProvider === AuthProvider.credentials && !password)
+      return { error: "Password is Needed!!" };
+
+    const passHash = input.password ? await argon.hash(input.password) : "";
+
+    const newUser = await User.create({ password: passHash, ...rest });
 
     const savedUser = await newUser.save();
 
     return savedUser;
   } catch (error: any) {
     console.error(error.message);
-    return error.message;
+    return { error: error.message };
   }
 };
 
-export const createUser = async (input: ICreateNewUser) => {
+export const getUserById = async (id: string) => {
   try {
-    await connectTodb();
-    const user = await User.findOne({ email: input.email });
-    if (user) throw new Error("Email is Existed!!");
+    const user = await User.findById(id);
+    if (!user) return false;
 
-    const newUser = await User.create(input);
-
-    const savedUser = await newUser.save();
-
-    return savedUser;
+    return omit(user, "password");
   } catch (error: any) {
     console.error(error.message);
-    throw new Error(error.message);
+    return error.message;
   }
 };
 
@@ -45,19 +47,64 @@ export const getAllUser = async () => {
     return _users;
   } catch (error: any) {
     console.error(error.message);
-    throw new Error(error.message);
+    return error.message;
+  }
+};
+
+export const verifyUserInfo = async (input: any) => {
+  try {
+    await connectTodb();
+    console.log(input);
+    const user = await User.findOne({ email: input.email });
+    if (!user) return false;
+
+    const verifiedPass = await argon.verify(user?.password, input.password);
+
+    if (!verifiedPass) return false;
+
+    return user;
+  } catch (error: any) {
+    console.error(error.message);
+    return error.message;
   }
 };
 
 export const loginUser = async (input: any) => {
   try {
-    await connectTodb();
-    console.log(input);
-    // const users = await User.find();
-    // const _users = users.map((user) => omit(user, "password"));
-    // return _users;
+    const user = await verifyUserInfo(input);
+    if (!user) return "Invalid Email or Password!!";
+
+    return omit(user, "password");
   } catch (error: any) {
     console.error(error.message);
-    throw new Error(error.message);
+    return error.message;
+  }
+};
+
+export const updateUserInfo = async (input: any) => {
+  try {
+    const user = await verifyUserInfo(input);
+    if (!user) return "Invalid Email or Password!!";
+
+    const updateUser = await User.findByIdAndUpdate(user._id, input);
+
+    return updateUser;
+  } catch (error: any) {
+    console.error(error.message);
+    return error.message;
+  }
+};
+
+export const deleteUser = async (input: any) => {
+  try {
+    const user = await verifyUserInfo(input);
+    if (!user) return "Invalid Email or Password!!";
+
+    const updateUser = await User.findByIdAndDelete(user._id);
+
+    return "succeeded!!";
+  } catch (error: any) {
+    console.error(error.message);
+    return error.message;
   }
 };
