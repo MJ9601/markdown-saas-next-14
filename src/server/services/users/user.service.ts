@@ -1,7 +1,12 @@
-import { omit } from "lodash";
+import { omit, rest } from "lodash";
 import * as argon from "argon2";
 import connectTodb from "../../connectTodb";
-import { AuthProvider, ICreateNewUser, IUserLoginWithCredentials } from ".";
+import {
+  AuthProvider,
+  ICreateNewUser,
+  IUserLoginWithCredentials,
+  IUserLoginWithThirdParty,
+} from ".";
 import { User } from "@/server/models/user.model";
 
 export const createNewUser = async (input: ICreateNewUser) => {
@@ -79,6 +84,49 @@ export const loginUserWithCredentials = async (
     const { _id, name, email, access, image } = user;
 
     return { id: String(_id), name, email, access, image };
+  } catch (error: any) {
+    console.error(error.message);
+    return false;
+  }
+};
+
+export const loginWithThirdParty = async (input: IUserLoginWithThirdParty) => {
+  try {
+    const user = await User.findOne({ email: input.email });
+    const { authId, authProvider, ...rest } = input;
+    if (!user) {
+      const newUser = await User.create({
+        googleAuthId: authProvider == AuthProvider.google && authId,
+        githubAuthId: authProvider == AuthProvider.github && authId,
+        ...rest,
+      });
+
+      const savedUser = await newUser.save();
+
+      return savedUser;
+    }
+    if (user) {
+      if (authProvider == AuthProvider.google && !user.googleAuthId) {
+        const updatedUser = await User.findByIdAndUpdate(
+          user.id,
+          {
+            $set: { googleAuthId: authId },
+          },
+          { new: true }
+        );
+        return updatedUser;
+      } else if (authProvider == AuthProvider.github && !user.githubAuthId) {
+        const updatedUser = await User.findByIdAndUpdate(
+          user.id,
+          {
+            $set: { githubAuthId: authId },
+          },
+          { new: true }
+        );
+        return updatedUser;
+      }
+      return user;
+    }
   } catch (error: any) {
     console.error(error.message);
     return false;

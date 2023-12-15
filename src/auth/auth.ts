@@ -72,5 +72,11 @@ export const { auth, signIn, signOut } = NextAuth({
 
       return session;
     },
+    // async signIn({ account, profile, user }) {
+    //   if(account?.provider === "google"){}
+    //   else if(account?.provider === "github"){}
+
+    //   return true;
+    // },
   },
 });

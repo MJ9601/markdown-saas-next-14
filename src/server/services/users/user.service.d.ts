@@ -25,3 +25,12 @@ export interface IUserLoginWithCredentials {
   password: string;
   callbackUrl?: string;
 }
+
+export interface IUserLoginWithThirdParty {
+  email: string;
+  authProvider: AuthProvider;
+  access: Role;
+  authId: string;
+  name: string;
+  image?: string;
+}
