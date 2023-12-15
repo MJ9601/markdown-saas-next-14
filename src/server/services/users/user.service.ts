@@ -1,7 +1,7 @@
 import { omit } from "lodash";
 import * as argon from "argon2";
 import connectTodb from "../../connectTodb";
-import { AuthProvider, ICreateNewUser } from ".";
+import { AuthProvider, ICreateNewUser, IUserLoginWithCredentials } from ".";
 import { User } from "@/server/models/user.model";
 
 export const createNewUser = async (input: ICreateNewUser) => {
@@ -51,7 +51,7 @@ export const getAllUser = async () => {
   }
 };
 
-export const verifyUserInfo = async (input: any) => {
+export const verifyUserInfo = async (input: IUserLoginWithCredentials) => {
   try {
     await connectTodb();
     console.log(input);
@@ -69,10 +69,12 @@ export const verifyUserInfo = async (input: any) => {
   }
 };
 
-export const loginUser = async (input: any) => {
+export const loginUserWithCredentials = async (
+  input: IUserLoginWithCredentials
+) => {
   try {
     const user = await verifyUserInfo(input);
-    if (!user) return "Invalid Email or Password!!";
+    if (!user) throw new Error("Invalid Email or Password!!");
 
     return omit(user, "password");
   } catch (error: any) {

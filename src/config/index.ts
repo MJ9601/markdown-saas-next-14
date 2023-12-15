@@ -8,6 +8,7 @@ const config = {
   dbUser: process.env.MONGO_INITDB_ROOT_USERNAME ?? "root",
   dbPass: process.env.MONGO_INITDB_ROOT_PASSWORD ?? "password",
   dbHost: process.env.DB_HOST ?? "localhost",
+  url: "http://localhost:3000",
 };
 
 export default config;

@@ -1,7 +1,9 @@
 "use server";
 
+import { signIn } from "@/auth/auth";
 import { signUpFromEntry } from "../schemas/user.schema";
 import { AuthProvider, Role, createNewUser } from "../services/users";
+import config from "@/config";
 
 export const handleSignUpFrom = async (prevState: any, formdData: FormData) => {
   const { email, name, password, confirmPassword } =
@@ -29,10 +31,30 @@ export const handleSignUpFrom = async (prevState: any, formdData: FormData) => {
   if (newUser.error) {
     return { message: newUser.error };
   }
+
+  await signIn("credentials", {
+    email,
+    password,
+    redirect: true,
+    redirectTo: config.url + "/dashboard",
+  });
+
   return { message: "succeeded!!" };
 };
 
-export const handleUserLogin = async () => {};
+export const handleLoginWithCredentials = async (
+  prevState: any,
+  formData: FormData
+) => {
+  const { email, password } = Object.fromEntries(formData);
+  await signIn("credentials", {
+    email,
+    password,
+    redirect: true,
+    redirectTo: config.url + "/dashboard",
+  });
+  return { message: "secceeded!!" };
+};
 
 export const handleDeleteUser = async () => {};
 

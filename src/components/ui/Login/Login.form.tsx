@@ -1,16 +1,24 @@
-import { loginUser } from "@/server/services/users";
+"use client";
+import { useFormState } from "react-dom";
 import { Button, Input, Label } from "../general";
 import { SiGithub, SiGoogle } from "react-icons/si";
+import { handleLoginWithCredentials } from "@/server/controllers";
+
+const initState = {
+  message: "",
+  errors: undefined,
+};
 
 export default async function LoginForm() {
-  const handleLogin = async (formData: any) => {
-    "use server";
-    await loginUser(Object.fromEntries(formData));
-  };
+  const [state, formAction] = useFormState(
+    handleLoginWithCredentials,
+    initState
+  );
+  console.log(state?.message);
 
   return (
     <form
-      action={handleLogin}
+      action={formAction}
       className="flex flex-col gap-8 ring-1 p-10 rounded-sm ring-slate-800 items-center min-w-[200px] max-w-[450px] mx-auto"
     >
       <h3 className="text-2xl tracking-wide ">Login</h3>
@@ -31,6 +39,7 @@ export default async function LoginForm() {
           Sign in
         </Button>
       </div>
+      {state.message && state.message}
       <hr className="ring-1 ring-slate-800 w-full" />
       <div className="w-full flex flex-col gap-4">
         <Button variant="outline">

@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import config from "@/config";
+import { loginUserWithCredentials } from "@/server/services/users";
 
 const {
   githubClientId,
@@ -18,13 +19,9 @@ export const { auth, signIn, signOut } = NextAuth({
     Credentials({
       async authorize(credentials) {
         try {
-          //  const user = await
-          return {
-            email: "user@mail.com",
-            image: "/",
-            name: "jane",
-            id: "jdjsdn",
-          };
+          // @ts-ignore
+          const user = await loginUserWithCredentials(credentials);
+          return user;
         } catch (error) {
           return null;
         }

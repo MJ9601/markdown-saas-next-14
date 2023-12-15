@@ -20,8 +20,8 @@ export interface ICreateNewUser {
   authProvider: AuthProvider;
 }
 
-export interface IUserLogin {
+export interface IUserLoginWithCredentials {
   email: string;
   password: string;
-  authProvider: AuthProvider;
+  callbackUrl?: string;
 }
