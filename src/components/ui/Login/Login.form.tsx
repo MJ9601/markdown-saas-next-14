@@ -1,15 +1,23 @@
-"use client";
+import { loginUser } from "@/server/services/users";
 import { Button, Input, Label } from "../general";
 import { SiGithub, SiGoogle } from "react-icons/si";
 
-export default function LoginForm() {
+export default async function LoginForm() {
+  const handleLogin = async (formData: any) => {
+    "use server";
+    await loginUser(Object.fromEntries(formData));
+  };
+
   return (
-    <form className="flex flex-col gap-8 ring-1 p-10 rounded-sm ring-slate-800 items-center min-w-[200px] max-w-[450px] mx-auto">
+    <form
+      action={handleLogin}
+      className="flex flex-col gap-8 ring-1 p-10 rounded-sm ring-slate-800 items-center min-w-[200px] max-w-[450px] mx-auto"
+    >
       <h3 className="text-2xl tracking-wide ">Login</h3>
       <div className="w-full flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <Label className="capitalize  font-[500]">usename</Label>
-          <Input name="username" type="email" placeholder="Email..." />
+          <Input name="email" type="email" placeholder="Email..." />
         </div>
         <div className="flex flex-col gap-2">
           <Label>Password</Label>

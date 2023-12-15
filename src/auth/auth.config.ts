@@ -1,3 +1,4 @@
+import config from "@/config";
 import { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
@@ -18,5 +19,6 @@ export const authConfig = {
       return true;
     },
   },
+  secret: config.authSecret,
   providers: [],
 } satisfies NextAuthConfig;

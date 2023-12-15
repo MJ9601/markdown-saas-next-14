@@ -3,16 +3,15 @@ import config from "@/config";
 
 const { dbName, dbPass, dbUser, dbHost } = config;
 
+let isConnected: any = null;
+
 export default async function connectTodb() {
   try {
-    await mongoose.connect(
-      `mongodb://${dbUser}:${dbPass}@${dbHost}:27017/${dbName}?authSource=admin`,
-      {
-        // @ts-ignore
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
+    if (isConnected) return;
+    const db = await mongoose.connect(
+      `mongodb://${dbUser}:${dbPass}@${dbHost}:27017/${dbName}?authSource=admin`
     );
+    isConnected = db.connections[0].readyState;
     console.log("connected to db!!");
   } catch (error: any) {
     console.error(error);
