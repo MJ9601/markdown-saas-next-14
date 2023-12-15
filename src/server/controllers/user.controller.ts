@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/auth/auth";
+import { signIn, signOut } from "@/auth/auth";
 import { signUpFromEntry } from "../schemas/user.schema";
 import { AuthProvider, Role, createNewUser } from "../services/users";
 import config from "@/config";
@@ -58,6 +58,8 @@ export const handleLoginWithCredentials = async (
 
 export const handleDeleteUser = async () => {};
 
-export const handleUserLogout = async () => {};
+export const handleUserLogout = async (fromData: FormData) => {
+  await signOut({ redirect: true, redirectTo: config.url + "/login" });
+};
 
 export const handleUpdateUser = async () => {};

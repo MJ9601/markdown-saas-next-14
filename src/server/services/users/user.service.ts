@@ -74,12 +74,14 @@ export const loginUserWithCredentials = async (
 ) => {
   try {
     const user = await verifyUserInfo(input);
-    if (!user) throw new Error("Invalid Email or Password!!");
+    if (!user) return false;
 
-    return omit(user, "password");
+    const { _id, name, email, access, image } = user;
+
+    return { id: String(_id), name, email, access, image };
   } catch (error: any) {
     console.error(error.message);
-    return error.message;
+    return false;
   }
 };
 

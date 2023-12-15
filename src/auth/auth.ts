@@ -13,6 +13,14 @@ const {
   googleClientSecret,
 } = config;
 
+interface User {
+  email: string;
+  id: string;
+  image: string;
+  name: string;
+  access: string;
+}
+
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
@@ -21,6 +29,8 @@ export const { auth, signIn, signOut } = NextAuth({
         try {
           // @ts-ignore
           const user = await loginUserWithCredentials(credentials);
+          if (!user) return null;
+          console.log(user);
           return user;
         } catch (error) {
           return null;
@@ -36,4 +46,31 @@ export const { auth, signIn, signOut } = NextAuth({
       clientSecret: githubClientSecret,
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.email = user.email;
+        token.id = user.id;
+        token.image = user.image;
+        token.name = user.name;
+        // @ts-ignore
+        token.access = user.access;
+      }
+
+      return token;
+    },
+    async session({ session, token }) {
+      session.user!.email = token.email;
+      // @ts-ignore
+      session.user!.id = token.id;
+      // @ts-ignore
+      session.user!.image = token.image;
+      // @ts-ignore
+      session.user!.name = token.name;
+      // @ts-ignore
+      session.user!.access = token.access;
+
+      return session;
+    },
+  },
 });
