@@ -4,7 +4,12 @@ import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import config from "@/config";
-import { loginUserWithCredentials } from "@/server/services/users";
+import {
+  AuthProvider,
+  Role,
+  loginUserWithCredentials,
+  loginWithThirdParty,
+} from "@/server/services/users";
 
 const {
   githubClientId,
@@ -30,7 +35,6 @@ export const { auth, signIn, signOut } = NextAuth({
           // @ts-ignore
           const user = await loginUserWithCredentials(credentials);
           if (!user) return null;
-          console.log(user);
           return user;
         } catch (error) {
           return null;
@@ -72,11 +76,25 @@ export const { auth, signIn, signOut } = NextAuth({
 
       return session;
     },
-    // async signIn({ account, profile, user }) {
-    //   if(account?.provider === "google"){}
-    //   else if(account?.provider === "github"){}
+    async signIn({ account, profile, user }) {
+      if (account?.provider === "google" || account?.provider == "github") {
+        const { name, email, picture: image, sub: authId } = profile!;
+        if (name && email && authId) {
+          const user = await loginWithThirdParty({
+            name,
+            email,
+            image,
+            authId,
+            authProvider: account?.provider as AuthProvider,
+            access: Role.normal,
+          });
+          if (!user) return false;
+          return true;
+        }
+        return false;
+      }
 
-    //   return true;
-    // },
+      return true;
+    },
   },
 });
