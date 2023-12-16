@@ -3,11 +3,13 @@ import { authConfig } from "./auth.config";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
+import { jwtAndSessionCallbacks } from "./callbacks";
 import { z } from "zod";
 import config from "@/config";
 import {
   AuthProvider,
   Role,
+  getMe,
   loginUserWithCredentials,
   loginWithThirdParty,
 } from "@/server/services/users";
@@ -27,7 +29,7 @@ interface User {
   access: string;
 }
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -54,6 +56,19 @@ export const { auth, signIn, signOut } = NextAuth({
     GoogleProvider({
       clientId: googleClientId,
       clientSecret: googleClientSecret,
+      async profile(profile) {
+        const user = await getMe(profile.email);
+        if (user) {
+          return {
+            access: user.access,
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            image: profile.picture,
+          };
+        }
+        return profile;
+      },
     }),
     GithubProvider({
       clientId: githubClientId,
@@ -61,31 +76,7 @@ export const { auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.email = user.email;
-        token.id = user.id;
-        token.image = user.image;
-        token.name = user.name;
-        // @ts-ignore
-        token.access = user.access;
-      }
-
-      return token;
-    },
-    async session({ session, token }) {
-      session.user!.email = token.email;
-      // @ts-ignore
-      session.user!.id = token.id;
-      // @ts-ignore
-      session.user!.image = token.image;
-      // @ts-ignore
-      session.user!.name = token.name;
-      // @ts-ignore
-      session.user!.access = token.access;
-
-      return session;
-    },
+    ...jwtAndSessionCallbacks,
     async signIn({ account, profile, user }) {
       if (account?.provider === "google" || account?.provider == "github") {
         const { name, email, picture: image, sub: authId } = profile!;

@@ -4,7 +4,6 @@ import { signIn, signOut } from "@/auth/auth";
 import { signUpFromEntry } from "../schemas/user.schema";
 import { AuthProvider, Role, createNewUser } from "../services/users";
 import config from "@/config";
-import { redirect } from "next/navigation";
 
 export const handleSignUpFrom = async (prevState: any, formdData: FormData) => {
   const { email, name, password, confirmPassword } =
@@ -37,7 +36,7 @@ export const handleSignUpFrom = async (prevState: any, formdData: FormData) => {
     email,
     password,
     redirect: true,
-    redirectTo: config.url + "/dashboard",
+    redirectTo: config.url,
   });
 };
 
@@ -51,7 +50,7 @@ export const handleLoginWithCredentials = async (
     email,
     password,
     redirect: true,
-    redirectTo: config.url + "/dashboard",
+    redirectTo: config.url,
   });
   // } catch (error: any) {
   //   switch (error.type) {
@@ -63,11 +62,14 @@ export const handleLoginWithCredentials = async (
   return { message: "Succeeded." };
 };
 
-export const handleSignInWithThirdParty = async (formData: any) => {
+export const handleSignInWithThirdParty = async (
+  prevState: any,
+  formData: any
+) => {
   const { provider } = Object.fromEntries(formData);
   await signIn(provider, {
     redirect: true,
-    redirectTo: config.url + "/dashboard",
+    redirectTo: config.url,
   });
 };
 

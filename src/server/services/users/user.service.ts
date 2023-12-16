@@ -45,6 +45,17 @@ export const getUserById = async (id: string) => {
   }
 };
 
+export const getMe = async (email: string) => {
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return false;
+    return user;
+  } catch (error: any) {
+    console.error(error.message);
+    return error.message;
+  }
+};
+
 export const getAllUser = async () => {
   try {
     const users = await User.find();
@@ -110,7 +121,7 @@ export const loginWithThirdParty = async (input: IUserLoginWithThirdParty) => {
         const updatedUser = await User.findByIdAndUpdate(
           user.id,
           {
-            $set: { googleAuthId: authId },
+            $set: { googleAuthId: authId, image: input.image },
           },
           { new: true }
         );
@@ -119,7 +130,7 @@ export const loginWithThirdParty = async (input: IUserLoginWithThirdParty) => {
         const updatedUser = await User.findByIdAndUpdate(
           user.id,
           {
-            $set: { githubAuthId: authId },
+            $set: { githubAuthId: authId, image: input.image },
           },
           { new: true }
         );
