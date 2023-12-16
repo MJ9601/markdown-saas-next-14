@@ -47,9 +47,9 @@ export default function SignupForm() {
             Sign up
           </Button>
           {state?.message && <p className="text-red-600">{state.message}</p>}
-          {state.errors && (
+          {state?.errors && (
             <div>
-              {Object.values(state.errors).map((itm) => (
+              {Object.values(state?.errors).map((itm) => (
                 <p className="text-red-600">{itm[0]}</p>
               ))}
             </div>

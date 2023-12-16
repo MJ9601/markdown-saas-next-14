@@ -9,7 +9,7 @@ const initState = {
   errors: undefined,
 };
 
-export default async function LoginForm() {
+export default function LoginForm() {
   const [state, formAction] = useFormState(
     handleLoginWithCredentials,
     initState
@@ -40,7 +40,7 @@ export default async function LoginForm() {
           </Button>
         </div>
       </form>
-      {state.message && state.message}
+      {state?.message && <p className="text-red-600">{state.message}</p>}
       <hr className="ring-1 ring-slate-800 w-full" />
       <ThirdPartySignIn />
     </div>

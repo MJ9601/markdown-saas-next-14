@@ -4,6 +4,7 @@ import { signIn, signOut } from "@/auth/auth";
 import { signUpFromEntry } from "../schemas/user.schema";
 import { AuthProvider, Role, createNewUser } from "../services/users";
 import config from "@/config";
+import { redirect } from "next/navigation";
 
 export const handleSignUpFrom = async (prevState: any, formdData: FormData) => {
   const { email, name, password, confirmPassword } =
@@ -32,21 +33,12 @@ export const handleSignUpFrom = async (prevState: any, formdData: FormData) => {
     return { message: newUser.error };
   }
 
-  try {
-    await signIn("credentials", {
-      email,
-      password,
-      redirect: true,
-      redirectTo: config.url + "/dashboard",
-    });
-  } catch (error: any) {
-    switch (error.type) {
-      case "CredentialsSignin":
-        return { message: "Invalid credentials." };
-      default:
-        return { message: "Something went wrong." };
-    }
-  }
+  await signIn("credentials", {
+    email,
+    password,
+    redirect: true,
+    redirectTo: config.url + "/dashboard",
+  });
 };
 
 export const handleLoginWithCredentials = async (
@@ -54,25 +46,26 @@ export const handleLoginWithCredentials = async (
   formData: FormData
 ) => {
   const { email, password } = Object.fromEntries(formData);
-  try {
-    await signIn("credentials", {
-      email,
-      password,
-      redirect: true,
-      redirectTo: config.url + "/dashboard",
-    });
-  } catch (error: any) {
-    switch (error.type) {
-      case "CredentialsSignin":
-        return { message: "Invalid credentials." };
-      default:
-        return { message: "Something went wrong." };
-    }
-  }
+  // try {
+  await signIn("credentials", {
+    email,
+    password,
+    redirect: true,
+    redirectTo: config.url + "/dashboard",
+  });
+  // } catch (error: any) {
+  //   switch (error.type) {
+  //     case "CredentialsSignin":
+  //       return { message: "Invalid credentials." };
+  //     default:
+  //   }
+  // }
+  return { message: "Succeeded." };
 };
 
-export const handleSignInWithThirdParty = async (privider: AuthProvider) => {
-  await signIn(privider, {
+export const handleSignInWithThirdParty = async (formData: any) => {
+  const { provider } = Object.fromEntries(formData);
+  await signIn(provider, {
     redirect: true,
     redirectTo: config.url + "/dashboard",
   });
