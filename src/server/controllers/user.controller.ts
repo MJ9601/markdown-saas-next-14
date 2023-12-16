@@ -32,14 +32,21 @@ export const handleSignUpFrom = async (prevState: any, formdData: FormData) => {
     return { message: newUser.error };
   }
 
-  await signIn("credentials", {
-    email,
-    password,
-    redirect: true,
-    redirectTo: config.url + "/dashboard",
-  });
-
-  return { message: "succeeded!!" };
+  try {
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: true,
+      redirectTo: config.url + "/dashboard",
+    });
+  } catch (error: any) {
+    switch (error.type) {
+      case "CredentialsSignin":
+        return { message: "Invalid credentials." };
+      default:
+        return { message: "Something went wrong." };
+    }
+  }
 };
 
 export const handleLoginWithCredentials = async (
@@ -47,13 +54,28 @@ export const handleLoginWithCredentials = async (
   formData: FormData
 ) => {
   const { email, password } = Object.fromEntries(formData);
-  await signIn("credentials", {
-    email,
-    password,
+  try {
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: true,
+      redirectTo: config.url + "/dashboard",
+    });
+  } catch (error: any) {
+    switch (error.type) {
+      case "CredentialsSignin":
+        return { message: "Invalid credentials." };
+      default:
+        return { message: "Something went wrong." };
+    }
+  }
+};
+
+export const handleSignInWithThirdParty = async (privider: AuthProvider) => {
+  await signIn(privider, {
     redirect: true,
     redirectTo: config.url + "/dashboard",
   });
-  return { message: "secceeded!!" };
 };
 
 export const handleDeleteUser = async () => {};

@@ -3,6 +3,7 @@ import { authConfig } from "./auth.config";
 import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
+import { z } from "zod";
 import config from "@/config";
 import {
   AuthProvider,
@@ -32,10 +33,19 @@ export const { auth, signIn, signOut } = NextAuth({
     Credentials({
       async authorize(credentials) {
         try {
-          // @ts-ignore
-          const user = await loginUserWithCredentials(credentials);
-          if (!user) return null;
-          return user;
+          const parsedCredentials = z
+            .object({
+              email: z.string().email(),
+              password: z.string().min(8).max(32),
+            })
+            .safeParse(credentials);
+          if (parsedCredentials.success) {
+            const { email, password } = parsedCredentials.data;
+            const user = await loginUserWithCredentials({ email, password });
+            if (!user) return null;
+            return user;
+          }
+          return null;
         } catch (error) {
           return null;
         }
