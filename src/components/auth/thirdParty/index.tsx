@@ -1,6 +1,6 @@
 "use client";
 import { SiGithub, SiGoogle } from "react-icons/si";
-import { Button } from "../ui/general";
+import { Button } from "../../general";
 import { handleSignInWithThirdParty } from "@/server/controllers";
 import { useFormState } from "react-dom";
 

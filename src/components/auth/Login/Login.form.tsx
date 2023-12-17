@@ -1,8 +1,8 @@
 "use client";
 import { useFormState } from "react-dom";
-import { Button, Input, Label } from "../general";
+import { Button, Input, Label } from "../../general";
 import { handleLoginWithCredentials } from "@/server/controllers";
-import ThirdPartySignIn from "../../thirdParty";
+import ThirdPartySignIn from "../thirdParty";
 
 const initState = {
   message: "",
