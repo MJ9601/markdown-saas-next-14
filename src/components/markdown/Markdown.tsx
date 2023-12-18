@@ -15,7 +15,9 @@ export default function MarkdownPreview({
 }) {
   return (
     <Markdown
-      className=" rounded-sm  min-h-[300px] py-2 px-2 break-words"
+      className={`rounded-sm  min-h-[300px] py-2 px-2 break-words ${
+        className ?? ""
+      }`}
       rehypePlugins={[rehypeHighlight]}
       components={{
         h1: ({ node, ...props }) => (
@@ -33,7 +35,7 @@ export default function MarkdownPreview({
             let Icon = PiTerminal;
             const id = Math.floor(Math.random() * 1000 + 1).toString();
             return (
-              <div className="bg-black/70 border rounded-md my-2">
+              <div className="bg-black/70 border rounded-md my-2 break-words">
                 <div className="flex justify-between py-1 items-center px-4 border-b-[1px]">
                   <div className="flex gap-3">
                     <Icon />
@@ -41,8 +43,8 @@ export default function MarkdownPreview({
                   </div>
                   <CopyButton id={id} />
                 </div>
-                <div className="w-full">
-                  <div className="p-5" id={id}>
+                <div className="w-full overflow-auto">
+                  <div className="p-5 break-words" id={id}>
                     {children}
                   </div>
                 </div>
@@ -50,12 +52,19 @@ export default function MarkdownPreview({
             );
           } else {
             return (
-              <code className="bg-background/80 rounded-md px-3">
+              <code className="bg-background/80 rounded-md px-3 break-words overflow-auto">
                 {children}
               </code>
             );
           }
         },
+        a: ({ node, ...props }) => (
+          <a {...props} className=" italic text-blue-500 underline my-1" />
+        ),
+
+        img: ({ node, ...props }) => (
+          <img {...props} className="w-full object-contain rounded-md" />
+        ),
       }}
     >
       {content}

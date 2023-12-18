@@ -8,13 +8,14 @@ import {
   FormItem,
 } from "@/components/general/form";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdSave } from "react-icons/md";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import MarkdownPreview from "@/components/markdown/Markdown";
 import { toast } from "@/components/general/use-toast";
+import Editor from "@/components/editor/Editor";
 
 const MAX_FILE_SIZE = 500000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -60,6 +61,10 @@ export default function BlogForm() {
       isPublished: true,
     },
   });
+
+  useEffect(() => {
+    form.setValue("content", preview?.content);
+  }, [preview?.content]);
 
   const setBlogPreviewInfo = (name: string, value: string | File) =>
     setPreview((prev: any) => ({ ...prev, [name]: value }));
@@ -228,29 +233,16 @@ export default function BlogForm() {
                   <div className="flex-1">
                     <Label>Content</Label>
                     <FormControl>
-                      <Textarea
-                        {...field}
-                        className="min-h-[300px]  resize "
-                        placeholder="description ...."
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setBlogPreviewInfo("content", e.currentTarget.value);
-                        }}
+                      <Editor
+                        field={""}
+                        fieldName="content"
+                        onChange={setBlogPreviewInfo}
                       />
                     </FormControl>
                     <FormDescription>
                       Write about subject at least 500 chars.
                     </FormDescription>
                   </div>
-                  {/* <div className="flex-1">
-                  <Label>j</Label>
-                  <Textarea
-                    disabled
-                    className="min-h-[300px] max-h-fit"
-                    value={form.getValues().content}
-                  />
-                  <MarkdownPreview content={form.getValues().content} />
-                </div> */}
                 </FormItem>
               )}
             />
@@ -286,7 +278,7 @@ export default function BlogForm() {
               )}
               {preview?.content && (
                 <div className="">
-                  <MarkdownPreview content={preview?.content} />
+                  <MarkdownPreview content={preview.content} />
                 </div>
               )}
             </div>
