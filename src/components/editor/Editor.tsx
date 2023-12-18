@@ -1,7 +1,6 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
-  Button,
   Input,
   Popover,
   PopoverContent,
@@ -22,6 +21,7 @@ import {
 import { GrBlockQuote } from "react-icons/gr";
 import { LuFileCode } from "react-icons/lu";
 import { Label } from "@radix-ui/react-label";
+import EditorButton from "./Editor.Button";
 
 const withoutSelectionButtons = [
   { name: "blockqoute", Icon: GrBlockQuote },
@@ -51,18 +51,13 @@ export default function Editor({
   field: any;
 }) {
   const [content, setContent] = useState("");
+  const formRef = useRef<any>(undefined);
 
   const updateContentWithTag = (
     tagName: string,
     value?: { name: string; link: string }
   ) => {
     const addTag = insertToEditor({ tagName, value });
-    setContent((prev) => prev + addTag);
-    document.getElementById("editorTextArea")?.focus();
-  };
-
-  const updateContentWithTagInSelect = (tagName: string) => {
-    const addTag = insertToEditor({ tagName });
     const textArea = document.getElementById("editorTextArea");
     // @ts-ignore
     const start = textArea?.selectionStart;
@@ -80,19 +75,21 @@ export default function Editor({
           prev.substring(end)
       );
 
-      document.getElementById("editorTextArea")?.focus();
+      textArea?.focus();
     } else {
-      setContent((prev) => prev + addTag);
-      document.getElementById("editorTextArea")?.focus();
+      setContent(
+        (prev) => prev.substring(0, start) + addTag + prev.substring(end)
+      );
+      textArea?.focus();
     }
   };
 
-  const handleFormSub = (e: FormEvent) => {
-    e.preventDefault();
-    // @ts-ignore
-    const formData = new FormData(e.target);
-    const { name, link, tagName } = Object.fromEntries(formData);
-    console.log({ name, link, tagName });
+  const handleFormSub = () => {
+    const {
+      name: { value: name },
+      link: { value: link },
+      tagName: { value: tagName },
+    } = formRef.current;
     updateContentWithTag(
       tagName as string,
       { name, link } as { name: string; link: string }
@@ -116,42 +113,37 @@ export default function Editor({
           <option value={"p"}>p</option>
         </select>
         {withSelectionButtons.map(({ name, Icon }) => (
-          <Button
-            variant="secondary"
-            key={name}
-            onClick={() => updateContentWithTagInSelect(name)}
-          >
+          <EditorButton key={name} onClick={() => updateContentWithTag(name)}>
             <Icon />
-          </Button>
+          </EditorButton>
         ))}
         {withoutSelectionButtons.map(({ name, Icon }) => (
-          <Button
-            key={name}
-            variant="secondary"
-            onClick={() => updateContentWithTag(name)}
-          >
+          <EditorButton key={name} onClick={() => updateContentWithTag(name)}>
             <Icon />
-          </Button>
+          </EditorButton>
         ))}
 
         {withPopOver.map(({ name, Icon }) => (
           <Popover key={name}>
             <PopoverTrigger>
-              <Button variant="secondary">
+              <EditorButton>
                 <Icon />
-              </Button>
+              </EditorButton>
             </PopoverTrigger>
             <PopoverContent>
-              <form onSubmit={handleFormSub} className="w-full">
+              <form ref={formRef} className="w-full">
                 <input type="hidden" name="tagName" value={name} />
                 <Label>Name</Label>
                 <Input className="!py-0 mb-2" name="name" type="text" />
                 <Label className="">Link</Label>
                 <Input className="!py-0 " name="link" type="url" />
                 <div className="w-full">
-                  <Button variant="secondary" className="mx-auto mt-2">
+                  <EditorButton
+                    onClick={handleFormSub}
+                    className="ml-auto w-fit mt-3"
+                  >
                     Set
-                  </Button>
+                  </EditorButton>
                 </div>
               </form>
             </PopoverContent>
@@ -159,13 +151,11 @@ export default function Editor({
         ))}
       </div>
       <Textarea
-        // {...field}
         id="editorTextArea"
         value={content}
         className="min-h-[350px] h-[40vh] max-h-screen"
         onChange={(e) => {
           setContent(e.target.value);
-          // field.onChange(e);
           onChange(fieldName, e.target.value);
         }}
       />

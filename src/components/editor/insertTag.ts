@@ -6,29 +6,29 @@ interface ITagInsertEditor {
 export default function insertToEditor({ tagName, value }: ITagInsertEditor) {
   switch (tagName) {
     case "h1":
-      return "\n# ";
+      return "\n# text";
     case "h2":
-      return "\n## ";
+      return "\n## text";
     case "h3":
-      return "\n### ";
+      return "\n### text";
     case "h4":
-      return "\n#### ";
+      return "\n#### text";
     case "h5":
-      return "\n##### ";
+      return "\n##### text";
     case "h6":
-      return "\n###### ";
+      return "\n###### text";
     case "p":
-      return "";
+      return "text";
     case "bold":
       return "**text**";
     case "italic":
       return "*text*";
     case "blockqoute":
-      return "\n> ";
+      return "\n> text";
     case "orderlist":
-      return "1. ";
+      return "1. text";
     case "unorderlist":
-      return "- ";
+      return "- text";
     case "code":
       return "`text`";
     case "blockCode":
