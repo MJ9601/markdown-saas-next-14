@@ -21,7 +21,7 @@ export default function Table({ columns, children }: ITableProps) {
           ))}
         </tr>
       </thead>
-      <tbody className="[&>:nth-child(odd)]:bg-secondary/30 [&>:nth-child(even)]:bg-secondary/60">
+      <tbody className="[&>:nth-child(odd)]:bg-secondary/30 [&>:nth-child(even)]:bg-secondary/60  ">
         {children}
       </tbody>
     </table>
