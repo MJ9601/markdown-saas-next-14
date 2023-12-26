@@ -48,7 +48,7 @@ export default function Editor({
 }: {
   fieldName: string;
   onChange: (name: string, value: any) => void;
-  field: any;
+  field?: any;
 }) {
   const [content, setContent] = useState("");
   const formRef = useRef<any>(undefined);
@@ -151,6 +151,7 @@ export default function Editor({
         ))}
       </div>
       <Textarea
+        name={fieldName}
         id="editorTextArea"
         value={content}
         className="min-h-[350px] h-[40vh] max-h-screen"

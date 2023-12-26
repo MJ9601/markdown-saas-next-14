@@ -9,6 +9,9 @@ const config = {
   dbPass: process.env.MONGO_INITDB_ROOT_PASSWORD ?? "password",
   dbHost: process.env.DB_HOST ?? "localhost",
   url: "http://localhost:3000",
+  cloudName: process.env.CLOUD_NAME,
+  cloudApiKey: process.env.API_KEY,
+  cloudApiSecret: process.env.API_SECRET,
 };
 
 export default config;

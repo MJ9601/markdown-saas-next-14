@@ -65,6 +65,18 @@ export default function MarkdownPreview({
         img: ({ node, ...props }) => (
           <img {...props} className="w-full object-contain rounded-md" />
         ),
+        ul: ({ node, ...props }) => (
+          <ul
+            {...props}
+            className=" my-1 [&>li]:pl-3 [&>li]:list-disc [&>li]:list-inside"
+          />
+        ),
+        ol: ({ node, ...props }) => (
+          <ol
+            {...props}
+            className=" my-1 [&>li]:pl-3 [&>li]:list-decimal [&>li]:list-inside"
+          />
+        ),
       }}
     >
       {content}
