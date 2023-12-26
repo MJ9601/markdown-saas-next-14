@@ -1,12 +1,5 @@
 "use client";
 import { Input, Label, Switch } from "@/components/general";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-} from "@/components/general/form";
 import Image from "next/image";
 import React, { useState } from "react";
 import { MdSave } from "react-icons/md";
@@ -16,7 +9,7 @@ import { handleCreateBlogInFormAction } from "@/server/controllers";
 import { useFormState } from "react-dom";
 import InputDesc from "@/components/general/input.desc";
 
-export default function BlogForm() {
+export default function BlogForm({ userId }: { userId: string }) {
   const [image, setImage] = useState<File | undefined>();
   const [preview, setPreview] = useState<any>("");
   const [state, formAction] = useFormState(
@@ -73,11 +66,8 @@ export default function BlogForm() {
   return (
     <div className="ring-1 ring-secondary/70 rounded-md py-4 px-5 max-w-[1250px] mx-auto flex flex-col lg:flex-row gap-3">
       <div className="flex-1">
-        <form
-          action={formAction}
-          className="w-full flex flex-col flex-1"
-        >
-          <input type="hidden" name="userId" />
+        <form action={formAction} className="w-full flex flex-col flex-1">
+          <input type="hidden" name="userId" value={userId} />
           <div className="ring-1 my-3 rounded-md flex justify-between">
             <div className="flex gap-2">
               <div className="flex w-fit justify-center items-center gap-5 py-3 px-3 bg-secondary/40">
@@ -104,6 +94,16 @@ export default function BlogForm() {
               Save
               <MdSave />
             </button>
+          </div>
+          <div className="py-2">
+            {/* {state?.message && <p className="text-red-600">{state.message}</p>} */}
+            {state?.errors && (
+              <div>
+                {Object.values(state?.errors).map((itm) => (
+                  <p className="text-red-600">{itm[0]}</p>
+                ))}
+              </div>
+            )}
           </div>
           <div className="flex flex-wrap">
             <div className="flex-[3]">

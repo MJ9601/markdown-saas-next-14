@@ -17,8 +17,7 @@ export const createBlogSchema = z.object({
     message: "keywords must be at least 3 characters.",
   }),
   thumbnail: z
-    .custom<FileList>()
-    .transform((file) => !!file && file.length > 0 && file.item(0))
+    .any()
     .refine(
       (files) => files && files!.size <= MAX_FILE_SIZE,
       "Max size of image is 500kB."

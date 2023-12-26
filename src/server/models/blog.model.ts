@@ -26,7 +26,6 @@ const blogSchema = new Schema(
       type: String,
       required: true,
       min: 50,
-      max: 20000,
     },
     isPremium: {
       type: Boolean,

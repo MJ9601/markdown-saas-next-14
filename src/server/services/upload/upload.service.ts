@@ -10,7 +10,7 @@ cloudinary.config({
 
 export const uploadImageFunc = async (file: File) => {
   try {
-    console.log(file);
+    // console.log(file);
     const arrayButter = await file.arrayBuffer();
     const buffer = new Uint8Array(arrayButter);
     const uploadingResult = await new Promise((resolve, reject) => {
@@ -30,7 +30,6 @@ export const uploadImageFunc = async (file: File) => {
         )
         .end(buffer);
     });
-    console.log(uploadingResult);
     return uploadingResult;
   } catch (error: any) {
     console.error(error.message);
